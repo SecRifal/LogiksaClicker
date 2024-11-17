@@ -56,9 +56,3 @@ header a:hover {
 .clicker:active, .up:active, .pets:active, .about:active{
     animation: pulse3 0.5s forwards;
 }
-
-.ups{
-    background-color: aliceblue;
-    text-align: center;
-    align-items: center;
-}
