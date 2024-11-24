@@ -47,7 +47,7 @@ header a:hover {
     color: white;
 }
 
-.clicker, .up, .pets, .about {
+.clicker, .up, .about {
     background-color: #D9D9D9;
     border-radius: 16px;
     height: 60%;
@@ -55,4 +55,17 @@ header a:hover {
 
 .clicker:active, .up:active, .pets:active, .about:active{
     animation: pulse3 0.5s forwards;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.comingSoon{
+    font-size: 64px;
+    text-shadow: 1px 1px 2px black, 0 0 1em black, 0 0 0.2em black;
+    font-family: 'Oswald';
 }

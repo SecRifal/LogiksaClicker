@@ -4,105 +4,91 @@ let perClick = document.querySelector('.perClick');
 let perSec = document.querySelector('.perSec');
 let sbtn = document.querySelector('.superButton');
 
-let cookies = document.cookie
-cookies = cookies.split('; ')
-let click = 1;
-let lSec = 0;
-let sClick = 30;
-let timer = 0
+let cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+    let [key, value] = cookie.split('=');
+    acc[key] = value;
+    return acc;
+}, {});
+
+let click = parseInt(cookies.click || 1); // Значення click (за замовчуванням 1)
+let lSec = parseInt(cookies.lSec || 0); // Значення lSec (за замовчуванням 0)
+let sClick = 30; // Супер кліки
+let timer = parseInt(cookies.timer || 0); // Таймер (за замовчуванням 0)
 
 let intervalId;
 
-function cookiesCheck(){
-    for(let i = 0; i < cookies.length; i++){
-        let cookie = cookies[i]
-        let name_and_value = cookie.split('=')
-        let name = name_and_value[0]
-        let bal = document.querySelector('.balance');
-        if (name == 'logiks' ){
-            let logiks = name_and_value[1]
-            bal.innerHTML = logiks;
-            
-        } else {
-            let logiks = 0
-            bal.innerHTML = logiks;
+function saveToCookies(key, value) {
+    document.cookie = `${key}=${value}; max-age=9999999999; path=/`;
+}
 
-        }
-        if (name == 'timer' ){
-            let seconds = name_and_value[1]
-            timer = seconds
-            sbtn.innerHTML = timer
-            
-        } else {
-            timer = 0
-            sbtn.innerHTML = 'L'
+function loadFromCookies() {
+    bal.innerHTML = cookies.logiks || 0;
+    timer = parseInt(cookies.timer || 0);
+    sbtn.innerHTML = timer > 0 ? timer : 'L';
+    perClick.innerHTML = click;
+    perSec.innerHTML = `${lSec} L/c`;
+}
 
-        }
+function timeCheck() {
+    if (timer == 0) {
+        sbtn.style.pointerEvents = 'all'; // Дозволити клік на кнопку
+        let amount = parseInt(bal.innerHTML);
+        amount += sClick;
+        bal.innerHTML = amount;
+        saveToCookies('logiks', amount);
+        timer = 30;
+        sbtn.innerHTML = timer;
+        saveToCookies('timer', timer);
+    }
 
+    if (timer != 0 && !intervalId) {
+        sbtn.style.pointerEvents = 'none'; // Заборонити клік на кнопку
+
+        intervalId = setInterval(() => {
+            timer--;
+            saveToCookies('timer', timer);
+            sbtn.innerHTML = timer;
+
+            if (timer == 0) {
+                clearInterval(intervalId);
+                intervalId = null; // Скидаємо ідентифікатор таймера
+                sbtn.style.pointerEvents = 'all'; // Дозволяємо клікати на кнопку
+                sbtn.innerHTML = 'L'; // Заміна тексту на кнопці на 'L'
+            }
+        }, 1000);
     }
 }
 
-function timeCheck(){
-    if (timer == 0) {
-       sbtn.style.pointerEvents = 'all'; // Дозволити клік на кнопку
-       let amount = +document.querySelector('.balance').innerHTML;
-       amount += sClick;
-       document.querySelector('.balance').innerHTML = amount;
-       document.cookie = `logiks=${amount}; max-age=99999999999999`;
-       timer = 30;
-       sbtn.innerHTML = timer;
-       document.cookie = `timer=${timer}; max-age=9999999999999`
-   }
-   
-   if (timer != 0 && !intervalId) {
-       sbtn.style.pointerEvents = 'none'; // Заборонити клік на кнопку
-
-       intervalId = setInterval(function() {
-           timer--;
-           document.cookie = `timer=${timer}; max-age=9999999999999`
-           sbtn.innerHTML = timer;
-           
-           // Коли timer досягає 0, зупинити таймер, дозволити клік та змінити текст на кнопці
-           if (timer == 0) {
-               clearInterval(intervalId);
-               intervalId = null; // Скидаємо ідентифікатор таймера
-               sbtn.style.pointerEvents = 'all'; // Дозволяємо клікати на кнопку
-               sbtn.innerHTML = 'L'; // Заміна тексту на кнопці на 'L'
-           }
-       }, 1000);
-   }
-}
-
-
-cookiesCheck()
-timeCheck()
-
-
-
-
-
-
-let lastSuperButtonClick = 0; // Час останнього натискання superButton
-let superButtonCooldown = 30000; // 30 секунд в мілісекундах
-
-
-perClick.innerHTML = click;
-perSec.innerHTML = lSec + ' L/c';
+// Виклик для ініціалізації значень
+loadFromCookies();
+timeCheck();
 
 btn.addEventListener('click', () => {
-    let amount = +document.querySelector('.balance').innerHTML;
-    console.log(amount)
+    let amount = parseInt(bal.innerHTML);
     amount += click;
-    document.querySelector('.balance').innerHTML = +amount
-    document.cookie = `logiks=${amount}; max-age=99999999999999`
-    
+    bal.innerHTML = amount;
+    saveToCookies('logiks', amount);
+    saveToCookies('click', click); // Зберігати "за клік" у кукі
 });
-
-
-
 
 sbtn.addEventListener('click', timeCheck);
 
+// Збереження click і lSec в кукі кожні 5 секунд
+setInterval(() => {
+    saveToCookies('click', click);
+    saveToCookies('lSec', lSec);
+}, 5000);
 
+// Для збільшення заробітку за клік можна додати обробник, наприклад:
+document.querySelector('.upgradeClick').addEventListener('click', () => {
+    click += 1; // Збільшити кількість заробітку за клік
+    perClick.innerHTML = click;
+    saveToCookies('click', click);
+});
 
-
+// Для збільшення пасивного заробітку за секунду:
+document.querySelector('.upgradeSec').addEventListener('click', () => {
+    lSec += 1; // Збільшити пасивний заробіток
+    perSec.innerHTML = `${lSec} L/c`;
+    saveToCookies('lSec', lSec);
+});
