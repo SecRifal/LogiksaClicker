@@ -76,6 +76,9 @@ header a:hover {
 
 .upClick, .upSClick{
     background-color: #e3aefe;
+    display: flex;
+    flex-direction: column;
+    line-height: 5;
     width: 400px;
     height: 400px;
     border-radius: 35px;
@@ -97,4 +100,25 @@ header a:hover {
 .row{
     display: flex;
     flex-direction: column;
+}
+
+.upC, .upCS{
+    display: flex;
+    background-color: antiquewhite;
+    border-radius: 35px;
+    width: 75%;
+    height: 50%;
+    justify-content: center;
+    flex-direction: column;
+    align-self: center;
+    line-height: 1.5;
+    cursor: pointer;
+    box-shadow: 5px 5px 2px white, 0 0 1em white, 0 0 0.2em white;
+    transition: 0.5s;
+}
+
+.upC:hover, .upCS:hover{
+    width: 80%;
+    box-shadow: 5px 5px 2px rgb(205, 205, 205), 0 0 1em rgb(205, 205, 205), 0 0 0.2em rgb(205, 205, 205);
+    text-shadow: 1px 1px 2px white, 0 0 1em rgb(255, 255, 255), 0 0 0.2em rgb(255, 255, 255);
 }
